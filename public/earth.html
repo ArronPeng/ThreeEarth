@@ -65,14 +65,14 @@ See: http://www.sitepoint.com/building-earth-with-webgl-javascript */
     var container, controls, camera, renderer, scene, light,
 rotationSpeed = 0.02,
 clock = new THREE.Clock(),
-WIDTH = window.innerWidth - 30,
-HEIGHT = window.innerHeight - 30;
+WIDTH = window.innerWidth,
+HEIGHT = window.innerHeight;
             
 //cam vars
 var angle = 40,
 aspect = WIDTH / HEIGHT,
 near = 0.1,
-far = 10000;
+far = 1000;
 
 //mesh vars
 var earthMesh, Atmos, AtmosMat;
@@ -82,12 +82,13 @@ var earthMesh, Atmos, AtmosMat;
                 
     //cam
     camera = new THREE.PerspectiveCamera(angle, aspect, near, far);
-    camera.position.set(1380, -17, 394);
-                
+    // camera.position.set(1380, -17, 394);
+    camera.position.x = 3.55;
+    camera.position.z = -128;            
      //scene
     scene = new THREE.Scene();
-    camera.lookAt(scene.position);
-                 
+    // camera.lookAt(scene.position);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));             
             
     //light          
     // light = new THREE.SpotLight(0xFFFFFF, 1, 0, Math.PI / 2, 1);
@@ -139,16 +140,16 @@ var earthMesh, Atmos, AtmosMat;
 
 
     //EARTH
-    var earthGeo = new THREE.SphereGeometry (200, 400, 400),
+    var earthGeo = new THREE.SphereGeometry (25, 40, 40),
         earthMat = new THREE.MeshPhongMaterial();
     earthMesh = new THREE.Mesh(earthGeo, earthMat);
                 
-    earthMesh.position.set(-100, 0, 0);
-    earthMesh.rotation.y=5;
+    // earthMesh.position.set(0, 0, 0);
+    // earthMesh.rotation.y=5;
     scene.add(earthMesh);
                 
     //diffuse
-    earthMat.map = THREE.ImageUtils.loadTexture('images/earthmap.jpg');
+    earthMat.map = THREE.ImageUtils.loadTexture('images/earth4.jpg');
     //bump
     earthMat.bumpMap = THREE.ImageUtils.loadTexture('images/bump-map.jpg');
     earthMat.bumpScale = 8;
@@ -180,7 +181,7 @@ var earthMesh, Atmos, AtmosMat;
     scene.add(Atmos);
 
     //STARS
-    var starGeo = new THREE.SphereGeometry (3000, 10, 100),
+    var starGeo = new THREE.SphereGeometry (100, 0, 0),
         starMat = new THREE.MeshBasicMaterial();
     starMat.map = THREE.ImageUtils.loadTexture('images/star-field.png');
     starMat.side = THREE.BackSide;
@@ -196,10 +197,22 @@ var earthMesh, Atmos, AtmosMat;
                 
     container.appendChild(renderer.domElement);
 
+    var raycaster;  
+    var mouse; 
+    raycaster = new THREE.Raycaster();  
+    mouse = new THREE.Vector2(); 
 
+     // function onDocumentMouseMove(event) {  
+     //            event.preventDefault();  
+     //            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;  
+     //            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;  
+     //            console(mouse.x);
+     //        } 
     //controls
+    // document.addEventListener("mousemove", onDocumentMouseMove, false);
+    
     controls = new THREE.OrbitControls( camera, renderer.domElement);
-    controls.addEventListener( 'change', render );
+    // controls.addEventListener( 'change', render );
 
             
       function animate(){
@@ -210,9 +223,13 @@ var earthMesh, Atmos, AtmosMat;
       }
             
       function render(){
+
+        // camera.position.x += (mouse.x - camera.position.x) * .05;
+
+        // camera.position.y += (mouse.y - camera.position.y) * .05;
         var delta = clock.getDelta();
 
-                earthMesh.rotation.y += rotationSpeed * delta;
+        earthMesh.rotation.y += rotationSpeed * delta;
         renderer.clear();
         renderer.render(scene, camera); 
       }
