@@ -79,7 +79,9 @@ var earthMesh, Atmos, AtmosMat;
        
     container = document.createElement('div');
     document.body.appendChild(container);
-                
+
+    var projector = new THREE.Projector();
+    document.addEventListener('mousedown', onDocumentMouseDown, false);
     //cam
     camera = new THREE.PerspectiveCamera(angle, aspect, near, far);
     // camera.position.set(1380, -17, 394);
@@ -210,7 +212,45 @@ var earthMesh, Atmos, AtmosMat;
      //        } 
     //controls
     // document.addEventListener("mousemove", onDocumentMouseMove, false);
-    
+    // var projector = new THREE.Projector();
+    var tube;
+
+    function onDocumentMouseDown(event) {
+
+        event.preventDefault();
+
+        var vector = new THREE.Vector3(( event.clientX / window.innerWidth ) * 2 - 1, -( event.clientY / window.innerHeight ) * 2 + 1, 0.5);
+        projector.unprojectVector(vector, camera);
+
+        var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+
+        var intersects = raycaster.intersectObjects([earthMesh]);
+
+        if (intersects.length > 0) {
+            intersects[ 0 ].object.material.transparent = true;
+            // intersects[ 0 ].object.material.opacity = 0.1;
+
+            // var points = [];
+            // var origin = raycaster.ray.origin.clone();
+            // console.log(origin);
+            // points.push(new THREE.Vector3(-30, 39.8, 30));
+            // points.push(intersects[0].point);
+
+
+            // var mat = new THREE.MeshBasicMaterial({color: 0xff0000, transparent: true, opacity: 1});
+            // var tubeGeometry = new THREE.TubeGeometry(new THREE.SplineCurve3(points), 60, 0.001);
+
+            // if (tube) scene.remove(tube);
+
+            // if (controls.showRay) {
+            //     tube = new THREE.Mesh(tubeGeometry, mat);
+            //     scene.add(tube);
+            // }
+
+
+        }
+    }
+
     controls = new THREE.OrbitControls( camera, renderer.domElement);
     // controls.addEventListener( 'change', render );
 
